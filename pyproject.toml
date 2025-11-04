@@ -1,0 +1,41 @@
+[project]
+name = "14-ecommerce"
+version = "0.1.0"
+description = "E-commerce core functionality with OOP"
+authors = [
+    {name = "Alex474-RAA", email = "addressee8@mail.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[tool.poetry]
+packages = [{include = "src", from = "."}]
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+flake8 = "^6.1.0"
+black = "^23.9.0"
+isort = "^5.12.0"
+
+[tool.black]
+line-length = 119
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 119
+
+[tool.flake8]
+max-line-length = 119
+extend-ignore = "E203, W503"
+exclude = [".git", "__pycache__", "build", "dist", "*.egg-info"]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
