@@ -1,17 +1,10 @@
-from src.models import Product, Category
+from src.models import Category, Product
 
-# Проверочный код из условия задачи
-if __name__ == "__main__":
-    # Создаем товары
-    product1 = Product("Samsung Galaxy S23", "Смартфон", 79999.99, 5)
-    product2 = Product("iPhone 15", "Смартфон", 89999.99, 3)
-    product3 = Product("Xiaomi Redmi Note 12", "Смартфон", 24999.99, 8)
+if __name__ == '__main__':
+    product1 = Product('Samsung Galaxy S23 Ultra', '256GB, Серый цвет, 200MP камера', 180000.0, 5)
+    product2 = Product('Iphone 15', '512GB, Gray space', 210000.0, 8)
+    product3 = Product('Xiaomi Redmi Note 11', '1024GB, Синий', 31000.0, 14)
 
-    # Создаем категорию
-    smartphones = Category("Смартфоны", "Мобильные телефоны", [product1, product2, product3])
+    category1 = Category('Смартфоны', 'Смартфоны, как средство не только коммуникации, но и получение дополнительных функций для удобства жизни', [product1, product2, product3])
 
-    print("Проверка корректности работы:")
-    print(f"Категория: {smartphones.name}")
-    print(f"Количество товаров: {len(smartphones.products)}")
-    print(f"Общее количество категорий: {Category.category_count}")
-    print(f"Общее количество товаров: {Category.product_count}")
+    print(category1.products)
