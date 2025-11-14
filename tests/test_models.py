@@ -1,7 +1,3 @@
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 from src.models import Product, Category
 
 
@@ -30,3 +26,6 @@ class TestCategory:
         Category("Cat2", "Desc", [product, product])
         assert Category.category_count == 2
         assert Category.product_count == 3
+    def test_product_repr(self):
+        product = Product("Test", "Desc", 100.0, 5)
+        assert "Product('Test', 'Desc', 100.0, 5)" in repr(product)
