@@ -2,16 +2,16 @@ class Product:
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
-        self._price = price  # Приватный атрибут цены
+        self.__price = price  # Меняем _price на __price (приватный)
         self.quantity = quantity
 
     def __repr__(self):
-        return f"Product('{self.name}', '{self.description}', {self._price}, {self.quantity})"
+        return f"Product('{self.name}', '{self.description}', {self.__price}, {self.quantity})"
 
     @property
     def price(self):
         """Геттер для цены"""
-        return self._price
+        return self.__price  # Обновляем на __price
 
     @price.setter
     def price(self, new_price: float):
@@ -19,7 +19,7 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
-        self._price = new_price
+        self.__price = new_price  # Обновляем на __price
 
     @classmethod
     def new_product(cls, product_data: dict):
@@ -30,7 +30,6 @@ class Product:
             price=product_data['price'],
             quantity=product_data['quantity']
         )
-
 
 class Category:
     category_count = 0
