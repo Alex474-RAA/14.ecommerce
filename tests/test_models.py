@@ -5,18 +5,18 @@ class TestProduct:
     def test_product_init(self):
         product = Product("Phone", "Smartphone", 500.0, 10)
         assert product.name == "Phone"
-        assert product.price == 500.0  # Используем геттер
+        assert product.price == 500.0
         assert product.quantity == 10
 
     def test_price_setter_positive(self):
         product = Product("Test", "Desc", 100.0, 5)
-        product.price = 150.0  # Используем сеттер
+        product.price = 150.0
         assert product.price == 150.0
 
     def test_price_setter_negative(self):
         product = Product("Test", "Desc", 100.0, 5)
-        product.price = -50.0  # Пытаемся установить отрицательную цену
-        assert product.price == 100.0  # Цена не должна измениться
+        product.price = -50.0
+        assert product.price == 100.0
 
     def test_new_product_class_method(self):
         product_data = {
@@ -29,6 +29,27 @@ class TestProduct:
         assert product.name == 'New Product'
         assert product.price == 200.0
         assert product.quantity == 3
+
+    def test_product_str_method(self):
+        product = Product("Test Product", "Description", 150.0, 8)
+        result = str(product)
+        assert "Test Product" in result
+        assert "150.0 руб." in result
+        assert "8 шт." in result
+
+    def test_product_add_method(self):
+        product1 = Product("Product1", "Desc1", 100.0, 5)  # 100*5 = 500
+        product2 = Product("Product2", "Desc2", 200.0, 3)  # 200*3 = 600
+        total = product1 + product2
+        assert total == 1100  # 500 + 600
+
+    def test_product_add_method_type_error(self):
+        product = Product("Test", "Desc", 100.0, 5)
+        try:
+            product + "not_a_product"
+            assert False, "Should raise TypeError"
+        except TypeError:
+            assert True
 
 
 class TestCategory:
@@ -67,3 +88,12 @@ class TestCategory:
         products_str = category.products
         assert "Product1, 100.0 руб. Остаток: 5 шт." in products_str
         assert "Product2, 200.0 руб. Остаток: 3 шт." in products_str
+
+    def test_category_str_method(self):
+        product1 = Product("Product1", "Desc1", 100.0, 5)
+        product2 = Product("Product2", "Desc2", 200.0, 3)
+        category = Category("Test Category", "Description", [product1, product2])
+
+        result = str(category)
+        assert "Test Category" in result
+        assert "количество продуктов: 8 шт." in result  # 5 + 3 = 8

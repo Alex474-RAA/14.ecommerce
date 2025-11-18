@@ -2,34 +2,42 @@ class Product:
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
-        self.__price = price  # Меняем _price на __price (приватный)
+        self.__price = price
         self.quantity = quantity
+
+    def __str__(self):
+        """Строковое представление товара"""
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __repr__(self):
         return f"Product('{self.name}', '{self.description}', {self.__price}, {self.quantity})"
 
+    def __add__(self, other):
+        """Магический метод сложения - возвращает общую стоимость товаров"""
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+        return (self.__price * self.quantity) + (other.__price * other.quantity)
+
     @property
     def price(self):
-        """Геттер для цены"""
-        return self.__price  # Обновляем на __price
+        return self.__price
 
     @price.setter
     def price(self, new_price: float):
-        """Сеттер для цены с проверкой"""
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
-        self.__price = new_price  # Обновляем на __price
+        self.__price = new_price
 
     @classmethod
     def new_product(cls, product_data: dict):
-        """Класс-метод для создания товара из словаря"""
         return cls(
             name=product_data['name'],
             description=product_data['description'],
             price=product_data['price'],
             quantity=product_data['quantity']
         )
+
 
 class Category:
     category_count = 0
@@ -38,24 +46,24 @@ class Category:
     def __init__(self, name: str, description: str, products: list):
         self.name = name
         self.description = description
-        self.__products = products  # Приватный атрибут списка товаров
+        self.__products = products
         Category.category_count += 1
         Category.product_count += len(products)
 
+    def __str__(self):
+        """Строковое представление категории"""
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
     def add_product(self, product):
-        """Метод для добавления товара в категорию"""
         self.__products.append(product)
         Category.product_count += 1
 
     @property
     def products(self):
-        """Геттер для списка товаров"""
-        products_str = ""
-        for product in self.__products:
-            products_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
-        return products_str.strip()
+        """Геттер для списка товаров (оптимизированный с использованием __str__)"""
+        return "\n".join(str(product) for product in self.__products)
 
     @property
     def products_list(self):
-        """Геттер для получения списка объектов товаров (для внутреннего использования)"""
         return self.__products
