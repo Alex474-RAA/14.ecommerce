@@ -1,43 +1,45 @@
 from src.models import Category, Product
 
 if __name__ == "__main__":
+    # Создаем товары
     product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
-    print(product1.name)
-    print(product1.description)
-    print(product1.price)
-    print(product1.quantity)
-    print(product2.name)
-    print(product2.description)
-    print(product2.price)
-    print(product2.quantity)
-    print(product3.name)
-    print(product3.description)
-    print(product3.price)
-    print(product3.quantity)
+    # Создаем категорию и добавляем товары через метод
+    category1 = Category("Смартфоны", "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни", [])
+    category1.add_product(product1)
+    category1.add_product(product2)
+    category1.add_product(product3)
 
-    category1 = Category("Смартфоны",
-                         "Смартфоны, как средство не только коммуникации,"
-                         " но и получения дополнительных функций для удобства жизни",
-                         [product1, product2, product3])
+    # Тестируем геттер products
+    print("=== СПИСОК ТОВАРОВ ===")
+    print(category1.products)
 
-    print(category1.name == "Смартфоны")
-    print(category1.description)
-    print(len(category1.products))
-    print(category1.category_count)
-    print(category1.product_count)
+    # Тестируем класс-метод
+    print("\n=== СОЗДАНИЕ ТОВАРА ЧЕРЕЗ КЛАСС-МЕТОД ===")
+    new_product_data = {
+        'name': 'Google Pixel 8',
+        'description': '128GB, Black',
+        'price': 75000.0,
+        'quantity': 4
+    }
+    product4 = Product.new_product(new_product_data)
+    print(f"Создан товар: {product4.name}, {product4.price} руб.")
 
-    product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-    category2 = Category("Телевизоры",
-                         "Современный телевизор, который позволяет наслаждаться просмотром,"
-                         " станет вашим другом и помощником",
-                         [product4])
+    # Тестируем сеттер цены
+    print("\n=== ТЕСТ СЕТТЕРА ЦЕНЫ ===")
+    print(f"Текущая цена: {product1.price}")
+    product1.price = -1000  # Должно вывести сообщение об ошибке
+    print(f"Цена после попытки установить -1000: {product1.price}")
+    product1.price = 190000.0  # Корректное изменение
+    print(f"Цена после установки 190000: {product1.price}")
 
-    print(category2.name)
-    print(category2.description)
-    print(len(category2.products))
-    print(category2.products)
-    print(Category.category_count)
-    print(Category.product_count)
+    # Создаем вторую категорию
+    product5 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
+    category2 = Category("Телевизоры", "Современный телевизор, который позволяет наслаждаться просмотром, станет вашим другом и помощником", [])
+    category2.add_product(product5)
+
+    print("\n=== СТАТИСТИКА ===")
+    print(f"Категорий: {Category.category_count}")
+    print(f"Товаров: {Category.product_count}")
