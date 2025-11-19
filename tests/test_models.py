@@ -1,4 +1,4 @@
-from src.models import Product, Category, Smartphone, LawnGrass
+from src.models import Category, LawnGrass, Product, Smartphone
 
 
 class TestProduct:
