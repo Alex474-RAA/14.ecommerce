@@ -1,5 +1,6 @@
 import pytest
-from src.models import Product, Category, Smartphone, LawnGrass, BaseProduct
+
+from src.models import BaseProduct, Category, LawnGrass, Product, Smartphone
 
 
 class TestBaseProduct:
@@ -10,8 +11,17 @@ class TestBaseProduct:
 
 
 class TestProduct:
+    def test_product_zero_quantity_raises_error(self):
+        """Проверяем, что товар с нулевым количеством вызывает ValueError"""
+        with pytest.raises(ValueError, match="Товар с нулевым количеством не может быть добавлен"):
+            Product("Invalid Product", "Description", 100.0, 0)
+
+    def test_product_positive_quantity_works(self):
+        """Проверяем, что товар с положительным количеством создается нормально"""
+        product = Product("Valid Product", "Description", 100.0, 1)
+        assert product.quantity == 1
+
     def test_product_inherits_from_base_product(self):
-        """Проверяем наследование от BaseProduct"""
         product = Product("Phone", "Smartphone", 500.0, 10)
         assert isinstance(product, BaseProduct)
 
@@ -59,11 +69,8 @@ class TestProduct:
     def test_product_add_method_different_type(self):
         product = Product("Product", "Desc", 100.0, 5)
         smartphone = Smartphone("Smartphone", "Desc", 500.0, 2, 2.5, "ModelX", 128, "Black")
-        try:
+        with pytest.raises(TypeError):
             product + smartphone
-            assert False, "Should raise TypeError"
-        except TypeError:
-            assert True
 
 
 class TestSmartphone:
@@ -85,8 +92,28 @@ class TestCategory:
         Category.category_count = 0
         Category.product_count = 0
 
+    def test_middle_price_with_products(self):
+        """Проверяем расчет средней цены с товарами"""
+        product1 = Product("Product1", "Desc1", 100.0, 5)
+        product2 = Product("Product2", "Desc2", 200.0, 3)
+        product3 = Product("Product3", "Desc3", 300.0, 2)
+        category = Category("Test Category", "Desc", [product1, product2, product3])
+
+        # (100 + 200 + 300) / 3 = 200
+        assert category.middle_price() == 200.0
+
+    def test_middle_price_empty_category(self):
+        """Проверяем расчет средней цены для пустой категории"""
+        category = Category("Empty Category", "Desc", [])
+        assert category.middle_price() == 0
+
+    def test_middle_price_single_product(self):
+        """Проверяем расчет средней цены для одного товара"""
+        product = Product("Single Product", "Desc", 150.0, 1)
+        category = Category("Single Category", "Desc", [product])
+        assert category.middle_price() == 150.0
+
     def test_add_product_with_base_product_check(self):
-        """Проверяем, что категория принимает только BaseProduct и наследников"""
         category = Category("Test Category", "Desc", [])
         product = Product("Product", "Desc", 100.0, 5)
         smartphone = Smartphone("Phone", "Desc", 50000.0, 2, 2.5, "Model", 128, "Black")
@@ -98,8 +125,5 @@ class TestCategory:
 
     def test_add_product_invalid_type(self):
         category = Category("Test Category", "Desc", [])
-        try:
+        with pytest.raises(TypeError):
             category.add_product("not_a_product")
-            assert False, "Should raise TypeError"
-        except TypeError:
-            assert True
