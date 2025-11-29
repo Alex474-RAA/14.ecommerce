@@ -6,7 +6,6 @@ class LogMixin:
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Не вызываем __repr__ здесь, чтобы избежать проблем с порядком инициализации
         print(f"Создан объект: {self.__class__.__name__}")
 
 
@@ -46,8 +45,12 @@ class Product(BaseProduct, LogMixin):
     """Основной класс продукта, наследует от BaseProduct и LogMixin"""
 
     def __init__(self, name: str, description: str, price: float, quantity: int):
+        # Проверка на нулевое количество
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
+
         BaseProduct.__init__(self, name, description, price, quantity)
-        LogMixin.__init__(self)  # Просто логируем факт создания
+        LogMixin.__init__(self)
 
     def __str__(self):
         return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
@@ -126,6 +129,14 @@ class Category:
             raise TypeError("Можно добавлять только объекты класса BaseProduct или его наследников")
         self.__products.append(product)
         Category.product_count += 1
+
+    def middle_price(self):
+        """Метод для подсчета средней цены товаров в категории"""
+        try:
+            total_price = sum(product.price for product in self.__products)
+            return total_price / len(self.__products)
+        except ZeroDivisionError:
+            return 0
 
     @property
     def products(self):
