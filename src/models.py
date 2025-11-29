@@ -1,32 +1,75 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class LogMixin:
+    """Миксин для логирования создания объектов"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Не вызываем __repr__ здесь, чтобы избежать проблем с порядком инициализации
+        print(f"Создан объект: {self.__class__.__name__}")
+
+
+class BaseProduct(ABC):
+    """Абстрактный базовый класс для всех продуктов"""
+
     def __init__(self, name: str, description: str, price: float, quantity: int):
         self.name = name
         self.description = description
-        self.__price = price
+        self._price = price
         self.quantity = quantity
 
+    @abstractmethod
     def __str__(self):
-        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+        pass
+
+    @abstractmethod
+    def __repr__(self):
+        pass
+
+    @abstractmethod
+    def __add__(self, other):
+        pass
+
+    @property
+    @abstractmethod
+    def price(self):
+        pass
+
+    @price.setter
+    @abstractmethod
+    def price(self, value):
+        pass
+
+
+class Product(BaseProduct, LogMixin):
+    """Основной класс продукта, наследует от BaseProduct и LogMixin"""
+
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        BaseProduct.__init__(self, name, description, price, quantity)
+        LogMixin.__init__(self)  # Просто логируем факт создания
+
+    def __str__(self):
+        return f"{self.name}, {self._price} руб. Остаток: {self.quantity} шт."
 
     def __repr__(self):
-        return f"Product('{self.name}', '{self.description}', {self.__price}, {self.quantity})"
+        return f"Product('{self.name}', '{self.description}', {self._price}, {self.quantity})"
 
     def __add__(self, other):
-        """Магический метод сложения с проверкой типа"""
         if type(self) is not type(other):
             raise TypeError("Нельзя складывать товары разных классов")
-        return (self.__price * self.quantity) + (other.__price * other.quantity)
+        return (self._price * self.quantity) + (other._price * other.quantity)
 
     @property
     def price(self):
-        return self.__price
+        return self._price
 
     @price.setter
     def price(self, new_price: float):
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная")
             return
-        self.__price = new_price
+        self._price = new_price
 
     @classmethod
     def new_product(cls, product_data: dict):
@@ -48,8 +91,7 @@ class Smartphone(Product):
         self.color = color
 
     def __repr__(self):
-        return (f"Smartphone('{self.name}', '{self.description}', {self.price}, "
-                f"{self.quantity}, {self.efficiency}, '{self.model}', {self.memory}, '{self.color}')")
+        return f"Smartphone('{self.name}', '{self.description}', {self.price}, {self.quantity}, {self.efficiency}, '{self.model}', {self.memory}, '{self.color}')"
 
 
 class LawnGrass(Product):
@@ -61,8 +103,7 @@ class LawnGrass(Product):
         self.color = color
 
     def __repr__(self):
-        return (f"LawnGrass('{self.name}', '{self.description}', {self.price}, "
-                f"{self.quantity}, '{self.country}', {self.germination_period}, '{self.color}')")
+        return f"LawnGrass('{self.name}', '{self.description}', {self.price}, {self.quantity}, '{self.country}', {self.germination_period}, '{self.color}')"
 
 
 class Category:
@@ -81,9 +122,8 @@ class Category:
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     def add_product(self, product):
-        """Метод для добавления товара с проверкой типа"""
-        if not isinstance(product, Product):
-            raise TypeError("Можно добавлять только объекты класса Product или его наследников")
+        if not isinstance(product, BaseProduct):
+            raise TypeError("Можно добавлять только объекты класса BaseProduct или его наследников")
         self.__products.append(product)
         Category.product_count += 1
 
